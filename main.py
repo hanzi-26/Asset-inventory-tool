@@ -92,7 +92,7 @@ class App:
 
     def show(self):
         for i in range(100):
-            time.sleep(random.random()*0.01 + 0.001)
+            time.sleep(random.random()*0.02 + 0.001)
             self.progress_bar['value'] += 1
             root.update()
 
@@ -131,6 +131,7 @@ class App:
         else:
             if not self.process(self.filename):
                 return
+
         self.progress_bar["value"] = 100
         messagebox.showinfo("转换完成", "已覆盖原文件")
         return
