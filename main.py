@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+
 import random
 import time
 import tkinter as tk
@@ -126,10 +126,11 @@ class App:
             b = self.filename
             a.append(b.split('\n'))
             for i in range(len(a[0])):
-                print(a[0][i])
-                self.process(a[0][i])
+                if not self.process(a[0][i]):
+                    return
         else:
-            self.process(self.filename)
+            if not self.process(self.filename):
+                return
         self.progress_bar["value"] = 100
         messagebox.showinfo("转换完成", "已覆盖原文件")
         return
@@ -137,17 +138,18 @@ class App:
     def process(self, file):
         try:
             df = pd.read_excel(file, sheet_name=0)  # sheet索引号从0开始
+
             values = df.values[1:]
-            # print(values)
+
             new_data = {"卡片编码": [], "epc编码": [], "资产名称": [], "规格型号": [], "使用部门": [], "原值": [], "使用日期": []}
             for value in values:
                 new_data["卡片编码"].append(value[2])
-            new_data["epc编码"].append(value[3].ljust(24, 'F'))
-            new_data["资产名称"].append(value[5])
-            new_data["规格型号"].append(value[6])
-            new_data["使用部门"].append(value[11])
-            new_data["原值"].append(value[7])
-            new_data["使用日期"].append(value[14])
+                new_data["epc编码"].append(value[3].ljust(24, 'F'))
+                new_data["资产名称"].append(value[5])
+                new_data["规格型号"].append(value[6])
+                new_data["使用部门"].append(value[11])
+                new_data["原值"].append(value[7])
+                new_data["使用日期"].append(value[14])
 
             writer = pd.ExcelWriter(file)
             new_data_pd = pd.DataFrame(new_data)
@@ -160,10 +162,13 @@ class App:
             worksheet.col(4).width = 8000
             worksheet.col(5).width = 8000
             worksheet.col(6).width = 8000
+
             writer.save()
-        except:
+            return True
+        except Exception as ex:
+            print(ex)
             messagebox.showerror("无法转换", "内部处理错误")
-            return
+            return False
 
 
 if __name__ == "__main__":
