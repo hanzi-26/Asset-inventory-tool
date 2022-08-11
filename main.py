@@ -135,12 +135,13 @@ class App:
         return
 
     def process(self, file):
-        df = pd.read_excel(file, sheet_name=0)  # sheet索引号从0开始
-        values = df.values[1:]
-        # print(values)
-        new_data = {"卡片编码": [], "epc编码": [], "资产名称": [], "规格型号": [], "使用部门": [], "原值": [], "使用日期": []}
-        for value in values:
-            new_data["卡片编码"].append(value[2])
+        try:
+            df = pd.read_excel(file, sheet_name=0)  # sheet索引号从0开始
+            values = df.values[1:]
+            # print(values)
+            new_data = {"卡片编码": [], "epc编码": [], "资产名称": [], "规格型号": [], "使用部门": [], "原值": [], "使用日期": []}
+            for value in values:
+                new_data["卡片编码"].append(value[2])
             new_data["epc编码"].append(value[3].ljust(24, 'F'))
             new_data["资产名称"].append(value[5])
             new_data["规格型号"].append(value[6])
@@ -148,18 +149,21 @@ class App:
             new_data["原值"].append(value[7])
             new_data["使用日期"].append(value[14])
 
-        writer = pd.ExcelWriter(file)
-        new_data_pd = pd.DataFrame(new_data)
-        new_data_pd.to_excel(writer, index=False, sheet_name="打印机格式")
-        worksheet = writer.sheets["打印机格式"]
-        worksheet.col(0).width = 8000
-        worksheet.col(1).width = 8000
-        worksheet.col(2).width = 8000
-        worksheet.col(3).width = 8000
-        worksheet.col(4).width = 8000
-        worksheet.col(5).width = 8000
-        worksheet.col(6).width = 8000
-        writer.save()
+            writer = pd.ExcelWriter(file)
+            new_data_pd = pd.DataFrame(new_data)
+            new_data_pd.to_excel(writer, index=False, sheet_name="打印机格式")
+            worksheet = writer.sheets["打印机格式"]
+            worksheet.col(0).width = 8000
+            worksheet.col(1).width = 8000
+            worksheet.col(2).width = 8000
+            worksheet.col(3).width = 8000
+            worksheet.col(4).width = 8000
+            worksheet.col(5).width = 8000
+            worksheet.col(6).width = 8000
+            writer.save()
+        except:
+            messagebox.showerror("无法转换", "内部处理错误")
+            return
 
 
 if __name__ == "__main__":
